@@ -1,0 +1,129 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 270 30% 98%;
+    --foreground: 260 20% 16%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 260 20% 16%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 260 20% 16%;
+
+    --primary: 262 60% 62%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 320 50% 92%;
+    --secondary-foreground: 320 40% 30%;
+
+    --muted: 260 20% 94%;
+    --muted-foreground: 260 10% 50%;
+
+    --accent: 180 50% 90%;
+    --accent-foreground: 180 40% 25%;
+
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 20% 90%;
+    --input: 260 20% 90%;
+    --ring: 262 60% 62%;
+
+    --radius: 1rem;
+
+    --success: 145 60% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 35 90% 55%;
+    --warning-foreground: 0 0% 100%;
+    --pink: 330 70% 70%;
+    --mint: 165 50% 75%;
+    --lavender: 262 50% 80%;
+    --peach: 20 80% 85%;
+    --sky: 200 70% 80%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --font-heading: 'Quicksand', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  .dark {
+    --background: 260 25% 8%;
+    --foreground: 260 10% 92%;
+
+    --card: 260 20% 12%;
+    --card-foreground: 260 10% 92%;
+
+    --popover: 260 20% 12%;
+    --popover-foreground: 260 10% 92%;
+
+    --primary: 262 60% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 320 30% 20%;
+    --secondary-foreground: 320 30% 85%;
+
+    --muted: 260 15% 18%;
+    --muted-foreground: 260 10% 55%;
+
+    --accent: 180 30% 18%;
+    --accent-foreground: 180 40% 80%;
+
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 15% 20%;
+    --input: 260 15% 20%;
+    --ring: 262 60% 65%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-card/70 backdrop-blur-xl border border-border/50 shadow-lg;
+  }
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--pink)));
+  }
+  .gradient-soft {
+    background: linear-gradient(135deg, hsl(var(--lavender) / 0.3), hsl(var(--pink) / 0.2), hsl(var(--sky) / 0.3));
+  }
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--pink)));
+  }
+}
