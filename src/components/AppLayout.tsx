@@ -17,7 +17,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
     <div className="min-h-screen bg-background">
       {/* Top nav */}
       <nav className="sticky top-0 z-50 glass border-b border-border/50">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="w-full px-4 h-16 flex items-center justify-between">
           <Link to="/dashboard" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
               <Shield className="w-4 h-4 text-primary-foreground" />
@@ -43,7 +43,7 @@ const AppLayout = ({ children }: { children: ReactNode }) => {
         </div>
       </nav>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main className="w-full px-4 py-8">
         {children}
       </main>
     </div>
