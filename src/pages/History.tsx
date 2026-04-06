@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { getScanHistory, deleteScan, ScanResult } from '@/lib/detection';
+import { generateReport } from '@/lib/reportGenerator';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, CheckCircle, Trash2, FileImage, FileVideo, FileAudio, Search, Download, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import AppLayout from '@/components/AppLayout';
-import { jsPDF } from 'jspdf';
 
 const HistoryPage = () => {
   const { user } = useAuth();
@@ -33,115 +33,6 @@ const HistoryPage = () => {
       setScans([]);
       toast.success('All history cleared');
     }
-  };
-
-  const generateReport = (scan: ScanResult) => {
-    const doc = new jsPDF();
-    const isFake = scan.result === 'fake';
-    const accentColor = isFake ? [220, 38, 38] : [34, 197, 94]; // Red vs Green
-    
-    // 1. HEADER & BRANDING
-    doc.setFillColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.rect(0, 0, 210, 50, 'F');
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(28);
-    doc.text("DeepGuard Report", 105, 25, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("NEURAL LAYER FORENSIC CERTIFICATE", 105, 35, { align: 'center' });
-    doc.text(`CERTIFICATE ID: ${scan.id.toUpperCase().slice(0, 16)}`, 105, 42, { align: 'center' });
-
-    // 2. WATERMARK
-    doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.setFontSize(60);
-    doc.setGState(new (doc as any).GState({ opacity: 0.05 }));
-    doc.text(isFake ? "AI GENERATED" : "AUTHENTIC MEDIA", 105, 150, { align: 'center', angle: 45 });
-    doc.setGState(new (doc as any).GState({ opacity: 1.0 }));
-
-    // 3. MEDIA METADATA
-    doc.setTextColor(40, 40, 40);
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("1. Media Assessment Metadata", 20, 65);
-    doc.setDrawColor(230, 230, 230);
-    doc.line(20, 68, 190, 68);
-
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    const metaData = [
-      ["Source File:", scan.fileName],
-      ["File Type:", scan.fileType.toUpperCase()],
-      ["Data Size:", `${(scan.fileSize / 1024 / 1024).toFixed(2)} MB`],
-      ["Timestamp:", new Date(scan.createdAt).toLocaleString()],
-      ["Neural Hash:", btoa(scan.id).slice(0, 24)]
-    ];
-
-    let yPos = 80;
-    metaData.forEach(([label, value]) => {
-      doc.setFont("helvetica", "bold");
-      doc.text(label, 20, yPos);
-      doc.setFont("helvetica", "normal");
-      doc.text(value, 60, yPos);
-      yPos += 8;
-    });
-
-    // 4. THE VERDICT SEAL
-    doc.setFillColor(248, 250, 252);
-    doc.roundedRect(20, 125, 170, 55, 4, 4, 'F');
-    doc.setDrawColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(20, 125, 170, 55, 4, 4, 'D');
-
-    doc.setFontSize(11);
-    doc.setTextColor(100, 100, 100);
-    doc.text("ANALYSIS VERDICT", 105, 135, { align: 'center' });
-    
-    doc.setFontSize(36);
-    doc.setTextColor(accentColor[0], accentColor[1], accentColor[2]);
-    doc.setFont("helvetica", "bold");
-    doc.text(isFake ? "DEEPFAKE DETECTED" : "VERIFIED AUTHENTIC", 105, 155, { align: 'center' });
-    
-    doc.setFontSize(14);
-    doc.text(`Confidence Level: ${scan.confidence}%`, 105, 170, { align: 'center' });
-
-    // 5. FORENSIC BREAKDOWN (Dynamic content)
-    doc.setTextColor(40, 40, 40);
-    doc.setFontSize(14);
-    doc.text("2. Forensic Observations", 20, 200);
-    doc.line(20, 203, 190, 203);
-
-    const findings = isFake ? [
-      "• Frequency Domain: GAN-generated artifacts found in high-frequency spatial layers.",
-      "• Biological Inconsistency: Non-natural blinking rhythm and pupil dilation detected.",
-      "• Environment Physics: Light refraction anomalies on dermal surfaces identified.",
-      "• Edge Analysis: Blurring detected on facial-edge boundaries (Neural blending)."
-    ] : [
-      "• Sensor Noise: Authentic ISO photon noise consistent with physical hardware capture.",
-      "• Dermal Variance: Organic skin texture variance and blood-flow (rPPG) verified.",
-      "• Temporal Fluidity: Natural motion blur and Newtonian physics alignment confirmed.",
-      "• Lighting: Sub-pixel ray reflections consistent with environmental light sources."
-    ];
-
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    let findingY = 212;
-    findings.forEach(line => {
-      doc.text(line, 25, findingY);
-      findingY += 10;
-    });
-
-    // 6. SYSTEM FOOTER
-    doc.setDrawColor(200, 200, 200);
-    doc.line(20, 275, 190, 275);
-    doc.setFontSize(8);
-    doc.setTextColor(150, 150, 150);
-    doc.text("This document is a cryptographic assessment generated by the DeepGuard Neural Engine.", 105, 282, { align: 'center' });
-    doc.text("The results are based on pixel-layer analysis and frequency domain verification.", 105, 286, { align: 'center' });
-
-    doc.save(`Forensic_Report_${scan.fileName.split('.')[0]}.pdf`);
-    toast.success('Professional Forensic Report Downloaded!');
   };
 
   const getIcon = (type: string) => {
@@ -251,7 +142,10 @@ const HistoryPage = () => {
                         <Button 
                           variant="outline" 
                           size="icon" 
-                          onClick={() => generateReport(scan)} 
+                          onClick={() => {
+                            generateReport(scan);
+                            toast.success('Report downloaded successfully!');
+                          }}
                           className="h-10 w-10 rounded-xl glass border-none ring-1 ring-border/50 hover:bg-primary hover:text-white transition-all shadow-sm"
                         >
                           <Download className="w-4 h-4" />
